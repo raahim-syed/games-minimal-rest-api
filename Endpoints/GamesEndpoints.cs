@@ -11,17 +11,16 @@ public static class GamesEndpoints
 
 const string GetGameEndpointName = "GetGame";
 
-    private static readonly List<GameDto> games = [
-        new (1, "Street Fighter 2", "Fighting", 199.99M, new DateOnly(1992, 7, 15)),
-        new (2, "Tekken", "Fighting", 192.99M, new DateOnly(1992, 7, 15)),
-        new (3, "Street Fighter 2", "Fighting", 199.99M, new DateOnly(1992, 7, 15)),
-        new (4, "Street Fighter 2", "Fighting", 199.99M, new DateOnly(1992, 7, 15)),
-    ];
+    // private static readonly List<GameDto> games = [
+    //     new (1, "Street Fighter 2", "Fighting", 199.99M, new DateOnly(1992, 7, 15)),
+    //     new (2, "Tekken", "Fighting", 192.99M, new DateOnly(1992, 7, 15)),
+    //     new (3, "Street Fighter 2", "Fighting", 199.99M, new DateOnly(1992, 7, 15)),
+    //     new (4, "Street Fighter 2", "Fighting", 199.99M, new DateOnly(1992, 7, 15)),
+    // ];
 
     // Extending Endpoints ------------------------------
     public static void MapGamesEndpoint(this WebApplication app)
-    {
-        
+    {    
         RouteGroupBuilder group = app.MapGroup("/games");
 
         // GET ------------------------------
@@ -38,7 +37,6 @@ const string GetGameEndpointName = "GetGame";
                         .AsNoTracking()
                         .ToListAsync()
         );
-
 
         // GET By ID ------------------------------
         group.MapGet("/{id}", async (int id, GamesStoreContext context) => {
@@ -91,7 +89,7 @@ const string GetGameEndpointName = "GetGame";
         });
 
         // PUT ------------------------------
-        group.MapPut("/{id}", async (int id, GameDetailsDto request, GamesStoreContext context) =>
+        group.MapPut("/{id}", async (int id, UpdateGameDto request, GamesStoreContext context) =>
         {
             // Finds the first instance with matching id, does not handle duplicates
             var game = await context.Games.FindAsync(id);

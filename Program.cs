@@ -8,8 +8,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Services
 builder.Services.AddProblemDetails();
 
-// Registery Entity Framework
-
 builder.AddGameStore();
 
 // Server Configuration
@@ -17,8 +15,11 @@ builder.AddGameStore();
 
 var app = builder.Build();
 
+// Enpoint Extensions
 app.MapGamesEndpoint();
+app.MapGenresEndpoint();
 
+// DB Extensions
 app.MigrateDb();
 
 app.Run();
