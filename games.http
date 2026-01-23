@@ -1,13 +1,13 @@
 ###
 
-Get http://localhost:5105/games/1
+Get http://localhost:5105/games/games
 
 ### 
 Post http://localhost:5105/games
 Content-Type: application/json
 
 {
-    "name": "Gdcfshost iojn of Tsusima -------",
+    "name": "gggggggggggggggggggggggg fdfdfefefefef",
     "genre": "Platform popo",
     "price": 60.00,
     "releaseDate": "2023-10-20"
@@ -16,6 +16,7 @@ Content-Type: application/json
 ###
 PUT http://localhost:5105/games/5
 Content-Type: application/json
+
 {
     "id": 5,
     "name": "Ghost of Tsushima",

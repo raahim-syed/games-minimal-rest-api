@@ -1,5 +1,8 @@
 using System;
+using GameStore.Api.Data;
 using GameStore.Api.Dtos;
+using GameStore.Api.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.Api.Endpoints;
 
@@ -22,68 +25,104 @@ const string GetGameEndpointName = "GetGame";
         RouteGroupBuilder group = app.MapGroup("/games");
 
         // GET ------------------------------
-        group.MapGet("/", () => games);
+        group.MapGet("/", async (GamesStoreContext context) => 
+            await context.Games
+                        .Include(game => game.GenreDetails)
+                        .Select(game => new GameDto(
+                            game.Id,
+                            game.Name,
+                            game.GenreDetails!.Name,
+                            game.Price,
+                            game.ReleaseDate
+                        ))
+                        .AsNoTracking()
+                        .ToListAsync()
+        );
 
-        group.MapGet("/{id}", (int id) => {
-            var game = games.Find(game => game.Id == id);
 
+        // GET By ID ------------------------------
+        group.MapGet("/{id}", async (int id, GamesStoreContext context) => {
+
+            var game = await context.Games.FindAsync(id);
+
+            if (game is null)
+                return Results.NotFound();
+
+            var gameDto = new GameDto(
+                Id: game.Id,
+                Name: game.Name,
+                Genre: game.GenreDetails!.Name,
+                Price: game.Price,
+                ReleaseDate: game.ReleaseDate
+            );
+
+            // return Results.Ok(gameDto);
             return game is null ? Results.NotFound() : Results.Ok(game); 
             
         }).WithName(GetGameEndpointName);
 
 
         // POST ------------------------------
-        group.MapPost("/", (CreateGameDto request) =>
+        group.MapPost("/", async (CreateGameDto request, GamesStoreContext context) =>
         {
-            if(string.IsNullOrEmpty(request.Name)) return Results.BadRequest("Name is required!");
-
             // Ceeate new object
-            GameDto game = new(
-                Id: games.Count + 1,
-                Name: request.Name,
-                Genre: request.Genre,
-                Price: request.Price,
-                ReleaseDate: request.ReleaseDate
+            Game game = new(){  
+                Name = request.Name,
+                GenreId = request.GenreId,
+                Price = request.Price,
+                ReleaseDate = request.ReleaseDate
+            };
+
+            // Save to Context
+            await context.Games.AddAsync(game);
+            context.SaveChanges();
+    
+            // For Data ransfer to Client 
+            GameDetailsDto gameDto = new(
+                Id: game.Id,
+                Name: game.Name,
+                GenreId: game.GenreId,
+                Price: game.Price,
+                ReleaseDate: game.ReleaseDate
             );
 
-            // Add to list
-            games.Add(game);
-
             // Return Response
-            return Results.CreatedAtRoute(GetGameEndpointName, new {id = game.Id}, game);
+            return Results.CreatedAtRoute(GetGameEndpointName, new {id = gameDto.Id}, gameDto);
         });
 
         // PUT ------------------------------
-        group.MapPut("/{id}", (int id, UpdateGameDto request) =>
+        group.MapPut("/{id}", async (int id, GameDetailsDto request, GamesStoreContext context) =>
         {
             // Finds the first instance with matching id, does not handle duplicates
-            int index = games.FindIndex((game) => game.Id == id);
+            var game = await context.Games.FindAsync(id);
 
-            if(index == -1) return Results.NotFound();
+            if (game is null) return Results.NotFound();
 
-            games[index] = new GameDto(    
-                Id: id,
-                Name: request.Name,
-                Genre: request.Genre,
-                Price: request.Price,
-                ReleaseDate: request.ReleaseDate
-            );
+            // Update properties (Tracks Entity Changes and Commits on Saving)
+            game.Name = request.Name;
+            game.GenreId = request.GenreId;
+            game.Price = request.Price;
+            game.ReleaseDate = request.ReleaseDate;
+
+            // Save to Context
+            context.Games.Update(game);
+            context.SaveChanges();
 
             return Results.NoContent();
         });
 
 
         // DELETE ------------------------------
-        group.MapDelete("/{id}", (int id) =>
+        group.MapDelete("/{id}", async (int id, GamesStoreContext context) =>
         {
-            int index = games.FindIndex((game) => game.Id == id);
+            var game = await context.Games.FindAsync(id);
 
-            if(index == -1) return Results.NotFound();
+            if (game is null) return Results.NotFound();    
 
-            games.RemoveAll(game => game.Id == id);
+            context.Games.Remove(game);
+            context.SaveChanges();
 
             return Results.NoContent();
         });
     }
-
 }

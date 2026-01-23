@@ -6,7 +6,11 @@ namespace GameStore.Api.Data;
 
 public class GamesStoreContext : DbContext
 {
-    public GamesStoreContext(DbContextOptions options) : base (options){}
+    // Lifecycle Method
+    public GamesStoreContext(DbContextOptions options) : base(options)
+    {
+        
+    }
 
     public DbSet<Game> Games {get; set;}
     public DbSet<Genre> Genres {get; set;}
