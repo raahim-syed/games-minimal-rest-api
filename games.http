@@ -12,3 +12,18 @@ Content-Type: application/json
     "price": 60.00,
     "releaseDate": "2023-10-20"
 }
+
+###
+PUT http://localhost:5105/games/5
+Content-Type: application/json
+{
+    "id": 5,
+    "name": "Ghost of Tsushima",
+    "genre": "Action-Adventure",
+    "price": 49.99,
+    "releaseDate": "2020-07-17"
+}
+###
+DELETE http://localhost:5105/games/1
+###
+Get http://localhost:5105/games

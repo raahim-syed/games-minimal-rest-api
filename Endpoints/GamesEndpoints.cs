@@ -22,9 +22,9 @@ const string GetGameEndpointName = "GetGame";
         RouteGroupBuilder group = app.MapGroup("/games");
 
         // GET ------------------------------
-        group.MapGet("/games", () => games);
+        group.MapGet("/", () => games);
 
-        group.MapGet("/{id}", () => (int id) => {
+        group.MapGet("/{id}", (int id) => {
             var game = games.Find(game => game.Id == id);
 
             return game is null ? Results.NotFound() : Results.Ok(game); 
@@ -47,7 +47,7 @@ const string GetGameEndpointName = "GetGame";
             );
 
             // Add to list
-            games.Append(game);
+            games.Add(game);
 
             // Return Response
             return Results.CreatedAtRoute(GetGameEndpointName, new {id = game.Id}, game);
@@ -56,6 +56,7 @@ const string GetGameEndpointName = "GetGame";
         // PUT ------------------------------
         group.MapPut("/{id}", (int id, UpdateGameDto request) =>
         {
+            // Finds the first instance with matching id, does not handle duplicates
             int index = games.FindIndex((game) => game.Id == id);
 
             if(index == -1) return Results.NotFound();
