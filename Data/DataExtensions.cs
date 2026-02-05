@@ -6,10 +6,11 @@ namespace GameStore.Api.Data;
 
 public static class DataExtensions
 {
+    //Creates DB on Startup of application if it doesn't exist and applies any pending migrations
     public static void MigrateDb(this WebApplication app)
     {
         // Creating Scope
-        using var scope = app.Services.CreateScope();
+        using var scope = app.Services.CreateScope( );
         var dbContext = scope.ServiceProvider
                             .GetRequiredService<GamesStoreContext>();
 

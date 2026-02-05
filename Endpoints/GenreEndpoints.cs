@@ -68,7 +68,7 @@ const string GetGenreEndpointName = "GetGenre";
                 new { id = genreDto.Id },
                 genreDto
             );
-        }).WithName(GetGenreEndpointName);
+        });
 
         // PUT ------------------------------
         group.MapPut("/{id}", async (int id, GenreDto request, GamesStoreContext context) =>
@@ -83,7 +83,13 @@ const string GetGenreEndpointName = "GetGenre";
             // Save changes
             await context.SaveChangesAsync();
 
-            return Results.NoContent();
+            // return Results.NoContent();
+
+            // Should return contnt
+            return Results.Ok(new GenreDto(
+                Id: genre.Id,
+                Name: genre.Name
+            ));
         });
 
 
@@ -97,7 +103,10 @@ const string GetGenreEndpointName = "GetGenre";
             context.Genres.Remove(genre);
             await context.SaveChangesAsync();
 
-            return Results.NoContent();
+            return Results.Ok(new GenreDto(
+                Id: genre.Id,
+                Name: genre.Name
+            ));
         }); 
     }
 }

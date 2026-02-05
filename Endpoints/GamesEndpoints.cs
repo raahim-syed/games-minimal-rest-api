@@ -41,7 +41,12 @@ const string GetGameEndpointName = "GetGame";
         // GET By ID ------------------------------
         group.MapGet("/{id}", async (int id, GamesStoreContext context) => {
 
-            var game = await context.Games.FindAsync(id);
+            var game = await context.Games
+                .Include(g => g.GenreDetails)
+                .FirstOrDefaultAsync(g => g.Id == id);
+
+            // Does not handle Navigation Properties, returns null for GenreDetails
+            // var game = await context.Games.FindAsync(id);
 
             if (game is null)
                 return Results.NotFound();
@@ -54,8 +59,18 @@ const string GetGameEndpointName = "GetGame";
                 ReleaseDate: game.ReleaseDate
             );
 
+            // Causes logical error/bug when FindAsync is used.
+            // var gameDto = new GameDto(
+            //     Id: game.Id,
+            //     Name: game.Name,
+            //     Genre: game.GenreDetails?.Name ?? "Not Specified",
+            //     Price: game.Price,
+            //     ReleaseDate: game.ReleaseDate
+            // );
+
+
             // return Results.Ok(gameDto);
-            return game is null ? Results.NotFound() : Results.Ok(game); 
+            return game is null ? Results.NotFound() : Results.Ok(gameDto); 
             
         }).WithName(GetGameEndpointName);
 
@@ -106,7 +121,14 @@ const string GetGameEndpointName = "GetGame";
             context.Games.Update(game);
             context.SaveChanges();
 
-            return Results.NoContent();
+            return Results.Ok(new GameDetailsDto(
+                Id: game.Id,
+                Name: game.Name,
+                GenreId: game.GenreId,
+                Price: game.Price,
+                ReleaseDate: game.ReleaseDate
+            ));
+            // return Results.NoContent();
         });
 
 
@@ -120,7 +142,13 @@ const string GetGameEndpointName = "GetGame";
             context.Games.Remove(game);
             context.SaveChanges();
 
-            return Results.NoContent();
+            return Results.Ok(new GameDetailsDto(
+                Id: game.Id,
+                Name: game.Name,
+                GenreId: game.GenreId,
+                Price: game.Price,
+                ReleaseDate: game.ReleaseDate
+            ));
         });
     }
 }

@@ -1,30 +1,60 @@
-###
+### Genres ---------------------------
+Get http://localhost:5105/genres
 
-Get http://localhost:5105/games/games
+###
+GET http://localhost:5105/genres/6
 
 ### 
+POST http://localhost:5105/genres
+Content-Type: application/json
+
+{
+    "name": "Fantasy"
+}
+
+###
+DELETE http://localhost:5105/genres/6
+
+###
+PUT http://localhost:5105/genres/6
+Content-Type: application/json
+
+{
+    "id": 6,
+    "name": "Sci-Fi"
+}
+
+### Games --------------------------- 
+GET http://localhost:5105/games
+
+###
+GET http://localhost:5105/games/3
+
+###
 Post http://localhost:5105/games
 Content-Type: application/json
 
 {
-    "name": "gggggggggggggggggggggggg fdfdfefefefef",
-    "genre": "Platform popo",
-    "price": 60.00,
+    "name": "star wars: jedi survivor",
+    "genreId": 3,
+    "price": 10.00,
     "releaseDate": "2023-10-20"
+
 }
 
 ###
-PUT http://localhost:5105/games/5
+PUT http://localhost:5105/games/2
 Content-Type: application/json
 
 {
-    "id": 5,
+    "id": 2,
     "name": "Ghost of Tsushima",
-    "genre": "Action-Adventure",
+    "genreId": 2,
     "price": 49.99,
     "releaseDate": "2020-07-17"
 }
 ###
-DELETE http://localhost:5105/games/1
+
+DELETE http://localhost:5105/games/2
 ###
-Get http://localhost:5105/games
+

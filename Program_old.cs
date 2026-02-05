@@ -27,6 +27,8 @@
     
 // }).WithName(GetGameEndpointName);
 
+// var connString = "Data Source=GameStore.db";
+// builder.Services.AddSqlite<GameStoreContext>(connString);
 
 // app.MapPost("/games", (CreateGameDto request) =>
 // {

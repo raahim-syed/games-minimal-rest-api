@@ -8,10 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Services
 builder.Services.AddProblemDetails();
 
+// Pre-Populate DB with Genres on Startup
 builder.AddGameStore();
-
-// Server Configuration
-// HTTP Request Pipeline
 
 var app = builder.Build();
 

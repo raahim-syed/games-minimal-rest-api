@@ -8,10 +8,9 @@ public class GamesStoreContext : DbContext
 {
     // Lifecycle Method
     public GamesStoreContext(DbContextOptions options) : base(options)
-    {
-        
-    }
+    {}
 
     public DbSet<Game> Games {get; set;}
-    public DbSet<Genre> Genres {get; set;}
+    // public DbSet<Genre> Genres {get; set;}
+    public DbSet<Genre> Genres => Set<Genre>();
 }
